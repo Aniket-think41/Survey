@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import Navbar from '@/components/Navbar';
 import Hero from '@/components/Hero';
 import SurveySection from '@/components/SurveySection';
@@ -8,10 +8,22 @@ import CustomRequestSection from '@/components/CustomRequestSection';
 import ReferSection from '@/components/ReferSection';
 import MiniGame from '@/components/MiniGame';
 import Footer from '@/components/Footer';
+import AdminDashboard from '@/components/AdminDashboard';
 import type { InventoryItem, PackOption } from '@/lib/supabase';
 
 function App() {
   const [purchaseModal, setPurchaseModal] = useState<{ item: InventoryItem; pack: PackOption } | null>(null);
+  const [isAdminRoute, setIsAdminRoute] = useState(() => window.location.hash === '#admin');
+
+  useEffect(() => {
+    const onHashChange = () => setIsAdminRoute(window.location.hash === '#admin');
+    window.addEventListener('hashchange', onHashChange);
+    return () => window.removeEventListener('hashchange', onHashChange);
+  }, []);
+
+  if (isAdminRoute) {
+    return <AdminDashboard />;
+  }
 
   const handleNavigate = useCallback((section: string) => {
     const el = document.getElementById(section);
